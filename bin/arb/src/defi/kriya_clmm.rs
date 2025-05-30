@@ -306,7 +306,7 @@ impl Dex for KriyaClmm {
         let module_name = Identifier::new("trade").map_err(|e| eyre!(e))?; // `trade`模块
         let function_name = Identifier::new("flash_swap").map_err(|e| eyre!(e))?;
         // 泛型参数是池的两种代币类型 `[CoinA, CoinB]`
-        let type_arguments = self.type_params.clone(); 
+        let type_arguments = self.type_params.clone();
         let call_arguments = self.build_flashloan_args(ctx, amount_to_borrow)?;
         ctx.command(Command::move_call(package_id, module_name, function_name, type_arguments, call_arguments));
 
@@ -330,11 +330,11 @@ impl Dex for KriyaClmm {
             // b2a (借T1换T0)
             (balance_t1_arg, balance_t0_arg, self.type_params[1].clone(), self.type_params[0].clone())
         };
-        
+
         // 销毁那个零余额的Balance对象 (对应原始借入代币在swap后的剩余，通常是0)
         let zero_balance_coin_type_tag = if self.is_a2b() { self.type_params[0].clone() } else { self.type_params[1].clone() };
         ctx.balance_destroy_zero(zero_balance_arg, zero_balance_coin_type_tag)?;
-        
+
         // 将目标代币的Balance转换为Coin对象
         let final_coin_out_arg = ctx.coin_from_balance(target_balance_arg, target_coin_type_tag)?;
 
@@ -376,7 +376,7 @@ impl Dex for KriyaClmm {
             // `self.type_params` 是 `[PoolCoin0, PoolCoin1]`。
             // `FlashSwapReceipt<CoinA, CoinB>` 中的 CoinA, CoinB 是指借贷发生时的 a 和 b。
             // 假设 `self.type_params` 顺序与回执中的顺序一致。
-            let debts_type_args = self.type_params.clone(); 
+            let debts_type_args = self.type_params.clone();
             let debts_args = vec![receipt_arg.clone()]; // `receipt` 需要被克隆或之后重新指定
             ctx.command(Command::move_call(
                 package_id,
@@ -395,7 +395,7 @@ impl Dex for KriyaClmm {
                 Argument::NestedResult(last_debts_idx, 1) // coin_b_debt
             }
         };
-        
+
         // 从 `coin_to_repay_arg` (这是我们拥有的、用于偿还的币的总量) 中分割出确切的 `repay_amount_arg`。
         // `repay_coin_exact_arg` 是精确数量的偿还用币。
         let repay_coin_exact_arg = ctx.split_coin_arg(coin_to_repay_arg.clone(), repay_amount_arg);
@@ -430,7 +430,7 @@ impl Dex for KriyaClmm {
         let package_id = ObjectID::from_hex_literal(CETUS_AGGREGATOR)?;
         let module_name = Identifier::new("kriya_clmm").map_err(|e| eyre!(e))?; // 聚合器中与Kriya CLMM交互的模块
         let function_name = Identifier::new(function_name_str).map_err(|e| eyre!(e))?;
-        
+
         // 泛型类型参数，通常是 `[CoinTypeA, CoinTypeB]`。
         let mut type_arguments = self.type_params.clone();
         if !self.is_a2b() { // 如果是 B to A (即 coin_in is token1)

@@ -187,14 +187,14 @@ pub fn new_tg_messages(
             .chat_id(GROUP_SUI_ARB)
             .text(msg.clone()) // 消息内容
             .disable_link_preview(true);
-        
+
         // 只有当thread_id不为空时才设置，否则Telegram API可能会报错
         if !sui_arb_thread_id.is_empty() {
             builder = builder.thread_id(sui_arb_thread_id);
         }
         Some(builder.build())
     };
-    
+
     // 将构建好的消息收集到一个向量中。
     // `filter_map` 用于过滤掉 `None` 值 (例如当msg2未创建时)。
     vec![Some(msg1), msg2].into_iter().filter_map(|m| m).collect()

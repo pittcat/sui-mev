@@ -687,7 +687,7 @@ mod tests {
         let coin_in_type = "0xa8816d3a6e3136e86bc2873b1f94a15cadc8af2703c075f2d546c2ae367f4df9::ocean::OCEAN";
         // 查找卖出路径
         let paths = defi.find_sell_paths(coin_in_type).await.unwrap();
-        
+
         // 断言至少找到一条路径 (如果测试环境中有流动性)
         assert!(!paths.is_empty(), "未找到任何卖出路径");
 
@@ -718,7 +718,7 @@ mod tests {
         let paths = defi.find_buy_paths(coin_out_type).await.unwrap();
 
         assert!(!paths.is_empty(), "未找到任何买入路径");
-        
+
         for path in paths {
             info!(?path, "找到的买入路径 (buy path)");
         }

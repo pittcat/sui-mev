@@ -180,7 +180,7 @@ impl Dex for KriyaAmm {
         let package_id = ObjectID::from_hex_literal(CETUS_AGGREGATOR)?;
         let module_name = Identifier::new("kriya_amm").map_err(|e| eyre!(e))?; // 聚合器中与Kriya AMM交互的模块
         let function_name = Identifier::new(function_name_str).map_err(|e| eyre!(e))?;
-        
+
         // 泛型类型参数，通常是 `[CoinTypeA, CoinTypeB]`。
         // `self.type_params` 在 `KriyaAmm::new` 中被设置为池的两种代币类型。
         // 需要确保这里的顺序与聚合器中 `swap_a2b` / `swap_b2a` 的泛型参数顺序匹配。
@@ -191,7 +191,7 @@ impl Dex for KriyaAmm {
 
         // 构建调用参数
         let call_arguments = self.build_swap_args(ctx, coin_in_arg)?;
-        
+
         // 添加Move调用命令到PTB
         ctx.command(Command::move_call(package_id, module_name, function_name, type_arguments, call_arguments));
 

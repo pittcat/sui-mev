@@ -243,7 +243,7 @@ where // `where` 子句用于指定 `INP` 和 `OUT` 必须满足的trait约束
             // 计算新的 mid_right 点。
             // mid_right = left + (right - left) / phi
             mid_right = left + calculate_reduction(right - left);
-            
+
             // 评估新的 mid_right 点
             let (new_score_mid_right, new_output_mid_right) = goal.evaluate(mid_right, additional_ctx).await;
             score_mid_right = new_score_mid_right;
@@ -295,7 +295,7 @@ where // `where` 子句用于指定 `INP` 和 `OUT` 必须满足的trait约束
                     if mid_left >= mid_right { // 如果调整后 mid_left 还是不小于 mid_right
                         mid_left = (mid_right - one).max(left); // 再调整
                     }
-                    
+
                     let (new_score_mid_left, new_output_mid_left) = goal.evaluate(mid_left, additional_ctx).await;
                     score_mid_left = new_score_mid_left;
                     output_mid_left = new_output_mid_left;
@@ -344,7 +344,7 @@ where // `where` 子句用于指定 `INP` 和 `OUT` 必须满足的trait约束
                         max_score_so_far = score_mid_right; max_input_so_far = mid_right; max_output_so_far = output_mid_right.clone();
                     }
                 } else { // 如果 mid_right 不在右边，就用 mid_left 的值，避免重复计算或无效状态
-                    score_mid_right = score_mid_left; 
+                    score_mid_right = score_mid_left;
                     // output_mid_right = output_mid_left.clone(); // 这行可能不需要，因为比较时只用score
                 }
              } else { // 区间太小，无法选择两个不同的内部点
@@ -422,7 +422,7 @@ mod tests {
             goal,
             &()    // 空的附加上下文
         ).await;
-        
+
         println!("GSS测试1结果: input: {}, output_score: {}", input, output_score);
 
         // 断言结果是否符合预期
@@ -446,7 +446,7 @@ mod tests {
             async fn evaluate(&self, inp: u128, _ctx: &()) -> (u128, u128) {
                 // 从HashMap中查找输入值对应的评估分数
                 // `&self.testdata[&inp]` 如果inp不在map中会panic，测试数据应确保覆盖搜索范围
-                let score = self.testdata[&inp]; 
+                let score = self.testdata[&inp];
                 (score, 0) // 附加输出为0
             }
         }

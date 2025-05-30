@@ -124,10 +124,10 @@ impl Shio {
         // 1. `s: &mut GlobalState` (或类似的类型): Shio的全局状态对象。
         //    通过 `next_state()` 方法轮询选择一个状态对象。
         let global_state_arg = ctx.obj(self.next_state()).map_err(|e| eyre!(e))?;
-        
+
         // 2. `bid_amount: u64`: 出价金额。
         let bid_amount_arg = ctx.pure(bid_amount).map_err(|e| eyre!(e))?;
-        
+
         // 3. `fee: Balance<SUI>` (或 `Coin<SUI>`): 用于支付出价的代币。
         //    合约的 `submit_bid` 函数可能接收一个 `Balance<SUI>` 对象。
         //    `ctx.coin_into_balance` 会将传入的 `Coin<SUI>` (coin_bid_arg) 转换为 `Balance<SUI>`。
@@ -137,7 +137,7 @@ impl Shio {
         //    假设 `submit_bid` 合约能正确处理传入的 `Balance` 中的金额。
         let sui_coin_type_tag = TypeTag::from_str(SUI_COIN_TYPE).unwrap();
         let fee_balance_arg = ctx.coin_into_balance(coin_bid_arg, sui_coin_type_tag)?;
-        
+
         let call_arguments = vec![global_state_arg, bid_amount_arg, fee_balance_arg];
 
         // Shio的 `submit_bid` 函数通常没有泛型类型参数 (因为它处理的是SUI出价)。
@@ -161,7 +161,7 @@ impl Shio {
         // `Ordering::Relaxed` 表示此原子操作不需要与其他内存操作建立同步关系，
         // 对于简单的计数器轮询是足够的。
         let mut current_idx = self.state_idx.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-        
+
         // 如果索引超出了 `global_states` 列表的范围，则重置为0。
         if current_idx >= self.global_states.len() {
             current_idx = 0;
@@ -170,7 +170,7 @@ impl Shio {
             // 或者简单地设置为0，然后下一次fetch_add会得到0，再加1。
             // 如果严格轮询，应该在 current_idx = 0 之后，将 state_idx 设置为 1 (如果len > 0)。
             // 当前实现：如果越界，下次从0开始，再下次从1开始。
-            self.state_idx.store(1, std::sync::atomic::Ordering::Relaxed); 
+            self.state_idx.store(1, std::sync::atomic::Ordering::Relaxed);
         }
 
         // 返回选定索引处的 `ObjectArg`。

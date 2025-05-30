@@ -400,7 +400,7 @@ impl Trader {
 
         // 2. 执行路径上的DEX交换
         // `current_active_coin_arg` 初始化为闪电贷借来的代币。
-        let mut current_active_coin_arg = flash_loan_result.coin_out; 
+        let mut current_active_coin_arg = flash_loan_result.coin_out;
         // 决定从路径的哪个DEX开始迭代：
         // - 如果第一个DEX提供了闪电贷，那么它已经作为借款步骤被处理了，
         //   `flash_loan_result.coin_out` 可能是该DEX借款并立即执行一步交换后的结果。

@@ -284,13 +284,13 @@ impl Dex for Cetus {
         let package_id = ObjectID::from_hex_literal(CETUS_DEX)?;
         let module_name = Identifier::new("cetus").map_err(|e| eyre!(e))?; // Cetus核心模块
         let function_name = Identifier::new(function_name_str).map_err(|e| eyre!(e))?;
-        
+
         // 泛型类型参数，与常规swap类似，需要根据 is_a2b 调整顺序
         let mut type_arguments = self.type_params.clone(); // [CoinA, CoinB] or [CoinB, CoinA]
         if !self.is_a2b() { // 如果是 B to A (即 coin_in is token1, coin_out is token0)
             type_arguments.swap(0, 1); // 确保泛型参数是 [CoinIn, CoinOut]
         }
-        
+
         let call_arguments = self.build_flashloan_args(ctx, amount_in)?;
         ctx.command(Command::move_call(package_id, module_name, function_name, type_arguments, call_arguments));
 
@@ -329,7 +329,7 @@ impl Dex for Cetus {
         let package_id = ObjectID::from_hex_literal(CETUS_DEX)?;
         let module_name = Identifier::new("cetus").map_err(|e| eyre!(e))?;
         let function_name = Identifier::new(function_name_str).map_err(|e| eyre!(e))?;
-        
+
         // 泛型类型参数，与flash_swap时一致
         let mut type_arguments = self.type_params.clone();
         if !self.is_a2b() {
@@ -359,13 +359,13 @@ impl Dex for Cetus {
         let package_id = ObjectID::from_hex_literal(CETUS_DEX)?;
         let module_name = Identifier::new("cetus").map_err(|e| eyre!(e))?;
         let function_name = Identifier::new(function_name_str).map_err(|e| eyre!(e))?;
-        
+
         // 泛型类型参数，与flash_swap时类似，需要根据 is_a2b 调整顺序
         let mut type_arguments = self.type_params.clone();
         if !self.is_a2b() {
             type_arguments.swap(0, 1); // 确保泛型参数是 [CoinInType, CoinOutType]
         }
-        
+
         let call_arguments = self.build_swap_args(ctx, coin_in_arg)?;
         ctx.command(Command::move_call(package_id, module_name, function_name, type_arguments, call_arguments));
 

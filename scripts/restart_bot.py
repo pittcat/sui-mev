@@ -114,26 +114,26 @@ def main():
     它会启动一个无限循环，在每个预设的时间间隔后调用 `restart_bot()` 函数。
     """
     logging.info("机器人重启脚本已启动。")
-    
+
     # 设置重启间隔为3小时（以秒为单位）
     # 3 小时 * 60 分钟/小时 * 60 秒/分钟
-    interval = 3 * 60 * 60  
+    interval = 3 * 60 * 60
 
     while True:  # 无限循环，以持续监控和重启机器人
         try:
             logging.info("开始执行机器人重启流程...")
             restart_bot()  # 调用重启函数
-            
+
             # 计算并记录下一次重启的计划时间
             next_restart_timestamp = time.time() + interval
             next_restart_datetime = datetime.fromtimestamp(next_restart_timestamp)
             logging.info(
                 f"机器人重启流程执行完毕。下次重启计划于: {next_restart_datetime.strftime('%Y-%m-%d %H:%M:%S')}"
             )
-            
+
             # 等待指定的时间间隔
             time.sleep(interval)
-            
+
         except KeyboardInterrupt:
             # 如果用户按下 Ctrl+C，则会捕获 KeyboardInterrupt 异常，脚本将优雅地退出。
             logging.info("脚本被用户终止。")

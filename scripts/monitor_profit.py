@@ -104,10 +104,10 @@ def monitor_profit(profit_address):
     # BALANCE_DIFF_THRESHOLD 是预设的利润阈值
     # 确保 profit_address_balance 也被正确初始化（在 main 中处理）
     if profit_address_balance != 0 and current_profit_address_balance - profit_address_balance >= BALANCE_DIFF_THRESHOLD:
-        
+
         # 如果利润超过阈值，获取与该利润相关的最新交易哈希
         profit_tx_hash = get_tx(profit_address=profit_address)
-        
+
         # 将余额从MIST转换为SUI，便于阅读 (1 SUI = 10^9 MIST)
         profit_address_balance_decimal = Decimal(profit_address_balance) / Decimal(10**9)
         current_profit_address_balance_decimal = Decimal(current_profit_address_balance) / Decimal(10**9)
@@ -117,7 +117,7 @@ def monitor_profit(profit_address):
             # 如果成功获取到交易哈希
             # Telegram的Markdown格式要求对某些特殊字符（如'_'）进行转义
             profit_tx_hash_md = profit_tx_hash.replace('_', '\\_')  
-            
+
             # 构建Telegram通知消息
             # 消息中包含：交易哈希的链接、之前的余额、当前余额和利润额
             msg = (
@@ -128,7 +128,7 @@ def monitor_profit(profit_address):
             )
             # 发送Telegram消息
             send_telegram_message(SUI_ARB_BOT_TOKEN, GROUP_SUI_ARB, THREAD_ONCHAIN_LARGE_PROFIT, msg)
-            
+
     # 更新全局变量profit_address_balance为当前查询到的余额，用于下一次比较
     profit_address_balance = current_profit_address_balance
 
@@ -151,7 +151,7 @@ def get_tx(profit_address):
     #   - 1: 限制返回结果数量为1，即我们只需要最新的那笔交易
     #   - True: 表示按降序排列（最新的在前）
     params = [
-        {"filter": {"ToAddress": profit_address}, 
+        {"filter": {"ToAddress": profit_address},
          "options": {"showEffects": False, "showInput": False, "showEvents": False, "showObjectChanges": False, "showBalanceChanges": False}}, # 精简options，仅获取digest
         None,  # cursor, for pagination, not used here
         1,     # limit

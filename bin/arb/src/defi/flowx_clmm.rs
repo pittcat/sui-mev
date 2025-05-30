@@ -426,7 +426,7 @@ impl Dex for FlowxClmm {
         let module_name = Identifier::new("pool").map_err(|e| eyre!(e))?; // `pool`模块中的swap函数
         let function_name = Identifier::new("swap").map_err(|e| eyre!(e))?;
         // 泛型参数是池的两种代币类型 `[CoinA, CoinB]`
-        let type_arguments = self.type_params.clone(); 
+        let type_arguments = self.type_params.clone();
         let call_arguments = self.build_flashloan_args(ctx, mutable_pool_arg.clone(), amount_in)?; // pool_arg是第一个参数
         ctx.command(Command::move_call(package_id, module_name, function_name, type_arguments, call_arguments));
 
@@ -482,11 +482,11 @@ impl Dex for FlowxClmm {
             // b2a (T1->T0): 借T1, 得到T0。 target_balance是T0, zero_balance是T1。
             (balance_t1_arg, balance_t0_arg, self.type_params[0].clone())
         };
-        
+
         // 销毁那个零余额的Balance对象 (因为 `pool::swap` 返回了两个Balance)
         let zero_balance_coin_type = if self.is_a2b() { self.type_params[0].clone() } else { self.type_params[1].clone() };
         ctx.balance_destroy_zero(received_zero_balance_arg, zero_balance_coin_type)?;
-        
+
         // 将目标代币的Balance转换为Coin对象
         let final_coin_out_arg = ctx.coin_from_balance(received_target_balance_arg, target_coin_type)?;
 
@@ -517,7 +517,7 @@ impl Dex for FlowxClmm {
         let module_name = Identifier::new("pool").map_err(|e| eyre!(e))?; // `pool`模块中的pay函数
         let function_name = Identifier::new("pay").map_err(|e| eyre!(e))?;
         // 泛型参数是池的两种代币类型 `[CoinA, CoinB]`
-        let type_arguments = self.type_params.clone(); 
+        let type_arguments = self.type_params.clone();
 
         let receipt_arg = flash_res.receipt;
         // 从 `FlashResult` 中获取之前借用的可变池对象的 `Argument`
@@ -583,7 +583,7 @@ impl Dex for FlowxClmm {
         let module_name = Identifier::new("swap_router").map_err(|e| eyre!(e))?;
         let function_name = Identifier::new("swap_exact_input").map_err(|e| eyre!(e))?;
         // 泛型参数是 `[CoinInType, CoinOutType]`
-        let type_arguments = self.type_params.clone(); 
+        let type_arguments = self.type_params.clone();
         let call_arguments = self.build_swap_args(ctx, coin_in_arg)?;
         ctx.command(Command::move_call(package_id, module_name, function_name, type_arguments, call_arguments));
 

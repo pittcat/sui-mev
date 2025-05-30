@@ -224,7 +224,7 @@ impl Aftermath {
         let weights = extract_u64_vec_from_move_struct(&parsed_pool_struct, "weights")?; // 代币权重
         let fees_swap_in = extract_u64_vec_from_move_struct(&parsed_pool_struct, "fees_swap_in")?; // 输入手续费率数组
         let fees_swap_out = extract_u64_vec_from_move_struct(&parsed_pool_struct, "fees_swap_out")?; // 输出手续费率数组
-        
+
         // 获取输入代币在池代币列表中的索引
         let index_in = pool_info.token_index(coin_in_type).ok_or_else(|| eyre!("输入代币 {} 在池 {} 的索引未找到", coin_in_type, pool_info.pool))?;
 
@@ -346,12 +346,12 @@ impl Aftermath {
         // 则需要先分割出一个面额正好是 `amount_in` 的新代币对象。
         // `ctx.split_coin` 会处理这个逻辑，并返回代表新分割出代币的 `Argument`。
         let coin_in_arg = ctx.split_coin(coin_in_ref, amount_in)?;
-        
+
         // 步骤2: 调用 `extend_trade_tx` 将实际的Aftermath交换操作添加到PTB中。
         // `coin_in_arg` 是上一步分割出来的代币。
         // `extend_trade_tx` 会返回代表输出代币的 `Argument`。
         let coin_out_arg = self.extend_trade_tx(&mut ctx, sender, coin_in_arg, Some(amount_in)).await?;
-        
+
         // 步骤3: 将输出代币 `coin_out_arg` 转移给指定的接收者 `recipient`。
         ctx.transfer_arg(recipient, coin_out_arg);
 
@@ -493,7 +493,7 @@ impl Dex for Aftermath {
         let package_id = ObjectID::from_hex_literal(AFTERMATH_DEX)?; // Aftermath合约包ID
         let module_name = Identifier::new("swap").map_err(|e| eyre!(e))?; // 模块名 "swap"
         let function_name = Identifier::new("swap_exact_in").map_err(|e| eyre!(e))?; // 函数名 "swap_exact_in"
-        
+
         // 泛型类型参数列表 (例如: [TokenTypeA, TokenTypeB, ..., CoinInType, CoinOutType])
         // 需要确认 `self.type_params` 的构造是否符合 `swap_exact_in` 的要求。
         // `swap_exact_in`的类型参数是池的所有代币类型 `CoinTypes`，然后是 `CoinIn`, `CoinOut`
@@ -501,10 +501,10 @@ impl Dex for Aftermath {
         // 在 `Aftermath::new` 中，`type_params` 被构造成 `[PoolCoinTypes..., CoinInTypeTag, CoinOutTypeTag]`
         // 这似乎是正确的。
         let type_arguments = self.type_params.clone();
-        
+
         // 构建调用参数列表
         let call_arguments = self.build_swap_args(ctx, coin_in_arg, amount_in_val).await?;
-        
+
         // 向PTB中添加一个Move调用命令
         ctx.command(Command::move_call(package_id, module_name, function_name, type_arguments, call_arguments));
 
@@ -530,7 +530,7 @@ impl Dex for Aftermath {
     async fn swap_tx(&self, sender: SuiAddress, recipient: SuiAddress, amount_in: u64) -> Result<TransactionData> {
         // 创建一个Sui客户端 (这里使用测试客户端，实际应从配置获取或传入)
         let sui_client = new_test_sui_client().await; // 注意：这会创建一个新的客户端，可能效率不高
-        
+
         // 获取一个面额至少为 `amount_in` 的输入代币对象。
         // `coin::get_coin` 会查找或分割代币。
         let coin_in_obj = coin::get_coin(&sui_client, sender, &self.coin_in_type, amount_in).await?;
@@ -760,10 +760,10 @@ fn calc_spot_price(balance_in: U256, balance_out: U256, weight_in: U256, weight_
                                                           // SP = term_in / term_out (定点数除法)
                                                           // 这才是正确的，因为 balance 是代币数量，weight 是比率。
                                                           // 所以 (balance_in / weight_in) 是单位权重的余额。
-    
+
     let term_in_fixed = div_down(balance_in, weight_in)?; // (BalanceIn / WeightIn) in fixed point
     let term_out_fixed = div_down(balance_out, weight_out)?; // (BalanceOut / WeightOut) in fixed point
-    
+
     // SP = term_in_fixed / term_out_fixed
     div_down(term_in_fixed, term_out_fixed)
 }

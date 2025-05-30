@@ -114,21 +114,21 @@ pub async fn run(args: Args) -> Result<()> { // `Result<()>` 表示函数可能�
 
     // 创建 Arb 实例，这是执行套利逻辑的核心。
     let arb = Arb::new(&args.http_config.rpc_url, Arc::clone(&simulator_pool)).await?;
-    
+
     // 创建 Sui SDK 客户端，用于与Sui区块链进行标准交互 (如获取gas币)。
     let sui = SuiClientBuilder::default().build(&args.http_config.rpc_url).await?;
-    
+
     // 获取发送者账户的gas代币对象引用 (ObjectRef)。
     // gas代币 (通常是SUI) 用于支付交易手续费。
     // `coin::get_gas_coin_refs` 是一个辅助函数。
     let gas_coins = coin::get_gas_coin_refs(&sui, sender, None).await?;
-    
+
     // 获取最新的Sui纪元 (epoch) 信息。纪元信息包含当前的gas价格等。
     let epoch = get_latest_epoch(&sui).await?;
-    
+
     // 创建模拟上下文 (SimulateCtx)，包含纪元信息和可能的初始状态 (这里是空)。
     let sim_ctx = SimulateCtx::new(epoch, vec![]);
-    
+
     // 将字符串形式的 pool_id (如果提供) 转换为 ObjectID 类型。
     // `ObjectID::from_hex_literal` 用于从十六进制字符串转换。
     let pool_id = args.pool_id.as_deref().map(ObjectID::from_hex_literal).transpose()?;
@@ -292,7 +292,7 @@ impl Arb {
             let goal = TrialGoal; // 定义GSS的优化目标 (这里是 `TrialGoal` 结构体)
             // 执行黄金分割搜索
             let (_, _, trial_res) = golden_section_search_maximize(lower_bound, upper_bound, goal, &ctx).await;
-            
+
             if trial_res.cache_misses > cache_misses {
                 cache_misses = trial_res.cache_misses;
             }
@@ -428,7 +428,7 @@ impl TrialCtx {
         skip_all,
         fields(
             // 将amount_in (通常是u64类型的MIST) 转换为f64类型的SUI并格式化
-            in = %format!("{:<15}", (amount_in as f64 / 1_000_000_000.0)), 
+            in = %format!("{:<15}", (amount_in as f64 / 1_000_000_000.0)),
             len = %format!("{:<2}", self.buy_paths.len()), // 买入路径数量
             action="init" // 初始action状态
         )
@@ -477,7 +477,7 @@ impl TrialCtx {
                 //         并且 (`buy_path_contains_pool` (如果pool_id指定了，买路径是否包含) OR `p.contains_pool(self.pool_id)` (如果pool_id指定了，卖路径是否包含))
                 //         如果 `self.pool_id` 是 `None`，则 `buy_path_contains_pool` (应为true或不关心) OR `p.contains_pool(None)` (应为true)
                 //         所以，核心是 `is_disjoint` 和 当 `pool_id` 有值时的包含性检查。
-                if best_buy_path.is_disjoint(sell_path_candidate) && 
+                if best_buy_path.is_disjoint(sell_path_candidate) &&
                    (buy_path_contains_pool || sell_path_candidate.contains_pool(self.pool_id)) {
                     // 如果满足条件，则将买入路径和卖出路径合并成一条完整的交易路径。
                     let mut full_trade_path = best_buy_path.clone(); // 克隆买入路径
@@ -517,7 +517,7 @@ impl TrialCtx {
                 &self.sim_ctx,
             )
             .await?;
-        
+
         let sell_elapsed = timer.elapsed(); // 记录卖出/组合阶段耗时
         // 记录调试信息，包含代币类型、最佳交易结果、买入耗时、卖出耗时
         debug!(coin_type = ?self.coin_type, result = %best_trade_res, ?buy_elapsed, ?sell_elapsed, "单次尝试结果");

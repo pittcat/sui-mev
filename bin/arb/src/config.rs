@@ -71,13 +71,13 @@ pub fn pegged_coin_types() -> HashSet<&'static str> {
 
         // Wormhole USDC (来自以太坊的USDC，通过Wormhole桥接)
         "0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN",
-        
+
         // Wormhole USDT (来自以太坊的USDT，通过Wormhole桥接)
         "0xc060006111016b8a020ad5b33834984a437aaa7d3c74c18e09a95d48aceab08c::coin::COIN",
-        
+
         // Wormhole WETH (来自以太坊的Wrapped ETH，通过Wormhole桥接)
         "0xaf8cd5edc19c4512f4259f0bee101a40d41ebed738ade5874359610ef8eeced5::coin::COIN",
-        
+
         // Celer USDC (另一种桥接的USDC)
         // "0xb231fcda8bbddb31f2ef02e6161444aec64a514e2c89279584ac9806ce9cf037::coin::COIN",
         // 上面这个地址在注释中提到是USDC，但实际的类型名可能是通用的 `coin::COIN`。

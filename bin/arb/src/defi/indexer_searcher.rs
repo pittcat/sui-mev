@@ -268,7 +268,7 @@ impl DexSearcher for IndexerDexSearcher {
             let simulator_instance = self.simulator_pool.get();
             // 从索引器获取指定ID的池信息。
             let pool_info = self.indexer.get_pool_by_id(pool_id).ok_or_eyre(format!("测试路径中池ID {} 未在索引器中找到", pool_id))?;
-            
+
             // 为该池创建DEX实例。
             // `new_dexes` 返回 `Vec<Box<dyn Dex>>`，对于测试路径，我们通常期望一个池ID只对应一个明确的交易对。
             // `.pop().unwrap()` 假设 `new_dexes` 对于这个场景总是返回包含一个元素的向量。

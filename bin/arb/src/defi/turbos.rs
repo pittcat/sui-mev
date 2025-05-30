@@ -224,7 +224,7 @@ impl Dex for Turbos {
         let package_id = ObjectID::from_hex_literal(CETUS_AGGREGATOR)?;
         let module_name = Identifier::new("turbos").map_err(|e| eyre!(e))?; // 聚合器中与Turbos交互的模块
         let function_name = Identifier::new(function_name_str).map_err(|e| eyre!(e))?;
-        
+
         // 泛型类型参数，对于Turbos是 `[CoinTypeA, CoinTypeB, FeeType]`。
         // `self.type_params` 在 `Turbos::new` 中被设置为池的这三种类型。
         // 需要确保这里的顺序与聚合器中 `swap_a2b` / `swap_b2a` 的泛型参数顺序匹配。
@@ -234,12 +234,12 @@ impl Dex for Turbos {
         let mut type_arguments = self.type_params.clone();
         if !self.is_a2b() { // 如果是 B to A (即 coin_in is CoinB)
             // 交换 CoinA 和 CoinB 的位置，FeeType 位置不变 (假设FeeType总是在最后)。
-            type_arguments.swap(0, 1); 
+            type_arguments.swap(0, 1);
         }
 
         // 构建调用参数
         let call_arguments = self.build_swap_args(ctx, coin_in_arg)?;
-        
+
         // 添加Move调用命令到PTB
         ctx.command(Command::move_call(package_id, module_name, function_name, type_arguments, call_arguments));
 
